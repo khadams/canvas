@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Canvas Assignment</title>
+
+	<script
+	  src="https://code.jquery.com/jquery-3.3.1.js"
+	  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+	  crossorigin="anonymous"></script>
+
+	<style type="text/css">
+		canvas{
+			border: 0.5px solid black;
+    }
+
+    .canvasContainer{
+      display: flex;
+			width: auto;
+			height: auto;
+    }
+		#color-picker:hover {
+			cursor: crosshair;
+		}
+		#color-picker {
+			height: 30px;
+			width: 30px;
+			padding: 2px;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+<div class="canvasContainer">
+<canvas id="canvas" width=.8 height=.8></canvas>
+</div>
+
+<!--  colorpicker html -->
+<div class='color-picker'>
+	<input name='color picker' id="color-picker" type="color" value="#f44274"/>
+</div>
+
+<script>
+  var canvas = document.querySelector("#canvas");
+  var context = canvas.getContext("2d");
+	canvas.width = window.innerWidth * 0.8;
+	canvas.height = window.innerHeight * 0.8;
+  canvas.addEventListener("mousemove", setMousePosition, false);
+  window.addEventListener("keyup", checkKeyPressed, false);
+	window.addEventListener("orientationchange", clearCanvas, false);
+	document.getElementById("color-picker").addEventListener("change", pickColor, false);
+
+//red pen that draws arcs (circles) as mouse moves - default color red, will be choppy if move mouse fast -- DONE
+var canvasPos = getPosition(canvas);
+var mouseX = 0;
+var mouseY = 0;
+var color = "#f44274";
+var radius = 15;
+
+function setMousePosition(e) {
+	// console.log(e)
+	mouseX = e.pageX;
+	mouseY = e.pageY;
+
+	drawSomething();
+}
+
+function checkKeyPressed(e) {
+	// console.log(e)
+	var key = e.keyCode;
+	changeColor(key);
+	console.log(key);
+}
+
+function changeColor(key) {
+  if (key == "66") {
+    color = "blue";
+  } else if (key == "71") {
+    color = "green";
+  } else if (key == "82") {
+    color = "#f44274";
+	} else if (key == "89") {
+		color = "yellow";
+	} else if (key == "32") {
+		context.clearRect(0, 0, canvas.width, canvas.height);
+	} else if (key == "38") {
+		radius += 3;
+	} else if (key == "40") {
+		radius = Math.max(1, radius -= 3);
+	}
+	drawSomething();
+}
+
+function pickColor(e) {
+	color = e.target.value;
+}
+
+	function drawSomething() {
+		context.beginPath();
+		context.arc(mouseX, mouseY, radius, 0, 2 * Math.PI, true);
+		context.fillStyle = color;
+		context.fill();
+  }
+
+function clearCanvas() {
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	console.log("The orientation of the screen is: " + screen.orientation.angle);
+}
+
+//pen changes colors with keyboard press "b" = blue, g = green, r = red, y = yellow - - DONE
+
+//use up and down arrow to change size of arc (but can never get to 0 or neg) uparrow = (e.charCode == "38"); downarrow = (e.charCode == "40") -- DONE
+
+//clear canvas using spacebar -- DONE
+
+//"react to touch events on mobile (not draw) the same way you react to mouse movements" -- DONE
+
+//on mobile - changing orientation of device should clear and resize canvasContainer  -- DONE
+
+//add a color picker https://seesparkbox.com/foundry/how_i_built_a_canvas_color_picker -- DONE
+
+//this code below gets the exact position of the element in relation to where the mouse is that we're listening for - it initializes the 0,0 position and then measures the mouse's position from the left accounting for the size, padding, etc. and scroll and any resizing. same
+function getPosition(el) {
+	var xPosition = 0;
+	var yPosition = 0;
+
+	while (el) {
+		xPosition += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+		yPosition += (el.offsetTop - el.scrollTop + el.clientTop);
+		el = el.offsetParent;
+	}
+	return {
+		x: xPosition,
+		y: yPosition
+	};
+}
+
+</script>
+
+</body>
+</html>
